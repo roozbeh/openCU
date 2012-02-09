@@ -1,0 +1,7 @@
+#!/bin/sh
+libnames=`cd ${1} ; ls -1 | grep '\.[0-9][0-9]*\.dylib$'`
+inst_cmd="install_name_tool "
+for i in ${libnames} ; do
+    inst_cmd="${inst_cmd} -change ${2}/lib/${i} ${1}/${i}"
+done
+${inst_cmd} ${3}
