@@ -1,12 +1,9 @@
-SUBDIRS = extlib/opencv-1.1pre1 \
- extlib/pa_stable_v19_20071207 \
- extlib/speex-1.2rc1  \
- extlib/wxGTK-2.8.10  \
- extlib/xvidcore-1.2.2/build/generic \
+SUBDIRS = \
+ inc \
  src
 
 AM_CPPFLAGS = \
-	`$(srcdir)/extlib/wxGTK-2.8.10/wx-config --cppflags`	\
+	`$(srcdir)/extlib/wxMac-2.8.12/wx-config --cppflags`	\
 	-I$(srcdir)/extlib/opencv-1.1pre1/cxcore/include	\
 	-I$(srcdir)/extlib/opencv-1.1pre1/cv/include	\
 	-I$(srcdir)/extlib/opencv-1.1pre1/otherlibs/highgui	\
