@@ -107,7 +107,8 @@ string ConnectDialog::getTargetIP()
 
 string ConnectDialog::getReflectorName()
 {
-	return m_hostIP->GetValue().c_str();
+	string ret(m_hostIP->GetValue().c_str());
+	return ret;
 }
 
 
@@ -123,7 +124,8 @@ int ConnectDialog::getTargetPort()
 
 string ConnectDialog::getUsername()
 {
-	return m_userName->GetValue().c_str();
+	string ret(m_userName->GetValue().c_str());
+	return ret;
 }
 
 

@@ -28,7 +28,6 @@ CaptureThread::CaptureThread() :
 };
 
 void CaptureThread::stop() {
-
 	wxMutex *stopMutex = new wxMutex;
     wxCondition *stopCondition = new wxCondition(*stopMutex);
 
@@ -93,7 +92,9 @@ wxThread::ExitCode CaptureThread::Entry()
 	}
 
 	if (m_capture) {
+#ifndef __WXMAC__	
 		cvReleaseCapture(&m_capture);
+#endif
 		m_capture = NULL;
 	}
 

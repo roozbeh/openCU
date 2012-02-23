@@ -47,8 +47,8 @@ VideoWindow::VideoWindow(wxMDIParentFrame *parent, const wxString& title, wxPoin
                          wxNO_FULL_REPAINT_ON_RESIZE)
 {
     canvas = (ImageCanvas *) NULL;
-
 	
+	printf("pos: %dx%d\n", pos.x, pos.y);
     // this should work for MDI frames as well as for normal ones
 }
 
@@ -144,7 +144,8 @@ void ImageCanvas::OnDraw(wxDC& dc)
 
 	dc.SetTextForeground(*wxBLACK);
 	dc.SetFont(*wxSWISS_FONT);
-	dc.DrawText(m_title, 5, 5);
+	wxString wxTitle = m_title.c_str();
+	dc.DrawText(wxTitle, 5, 5);
 
 	m_frameMutex.Lock();
 	if (m_bitmap) {

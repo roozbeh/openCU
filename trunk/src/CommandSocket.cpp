@@ -279,7 +279,8 @@ void CommandSocket::onReflectorMessage(ReflectorMessagePacket *p)
 
 		if (m_mainFrame) {
 		    wxCommandEvent welcomeEvent(wxEVT_REFMSG_EVENT);
-			welcomeEvent.SetString(stat_str.str());
+			wxString wxEventStr = stat_str.str().c_str();
+			welcomeEvent.SetString(wxEventStr);
 	    	wxPostEvent(m_mainFrame, welcomeEvent);
 		}
 

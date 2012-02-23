@@ -29,6 +29,10 @@
 // not wxApp)
 IMPLEMENT_APP(MyApp)
 
+#ifdef __WXMAC__	
+#include <ApplicationServices/ApplicationServices.h>
+#endif	
+
 // ============================================================================
 // implementation
 // ============================================================================
@@ -40,6 +44,13 @@ IMPLEMENT_APP(MyApp)
 // 'Main program' equivalent: the program execution "starts" here
 bool MyApp::OnInit()
 {
+	
+#ifdef __WXMAC__	
+	ProcessSerialNumber PSN;
+	GetCurrentProcess(&PSN);
+	TransformProcessType(&PSN,kProcessTransformToForegroundApplication);	
+#endif	
+	
     // create the main application window
     MainFrame *frame = new MainFrame((wxFrame *)NULL, wxID_ANY, _T("openCU client"),
                         wxDefaultPosition, wxSize(500, 400),
@@ -62,7 +73,7 @@ bool MyApp::OnInit()
     // created initially)
     frame->Show(true);
 
-    frame->StartCapture();
+    // frame->StartCapture();
 
     // success: wxApp::OnRun() will be called which will enter the main message
     // loop and the application will run. If we returned false here, the

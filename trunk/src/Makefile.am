@@ -1,27 +1,26 @@
-bin_PROGRAMS = h264client
+bin_PROGRAMS = openCU
 
 AM_CPPFLAGS = \
-	`../extlib/wxGTK-2.8.10/wx-config --cppflags`	\
-	-I../extlib/opencv-1.1pre1/cxcore/include	\
-	-I../extlib/opencv-1.1pre1/cv/include	\
-	-I../extlib/opencv-1.1pre1/otherlibs/highgui	\
-	-I../extlib/pa_stable_v19_20071207/include/	\
-	-I../extlib/xvidcore-1.2.2/src		\
-	-I../extlib/speex-1.2rc1/include/	\
-	-DIMAGESDIR='"$(pkgdatadir)/images/"'
+	-DIMAGESDIR='"./"'
+#-DIMAGESDIR='"$(pkgdatadir)/images/"'
 
-h264client_LDFLAGS = \
-	`../extlib/wxGTK-2.8.10/wx-config --libs`	\
-	-L../extlib/opencv-1.1pre1/cxcore/src/.libs/	\
-	-L../extlib/opencv-1.1pre1/cv/src/.libs/		\
-	-L../extlib/opencv-1.1pre1/otherlibs/highgui/.libs/ 	\
-	-L../extlib/speex-1.2rc1/libspeex/.libs \
-	-L../extlib/pa_stable_v19_20071207/lib/.libs \
-	-L../extlib/xvidcore-1.2.2/build/generic/=build 
+# openCU_LDFLAGS = \
+# 	`../extlib/wxWidgets-2.9.3/wx-config --libs` -lz
 
-h264client_LDADD = -lcxcore -lcv -lhighgui -lspeex -lportaudio -lxvidcore
+# openCU_LDADD = -lcxcore -lcv -lhighgui -lspeex -lportaudio -lxvidcore
 
-h264client_SOURCES = \
+# PRECOMPILED_HEADER = ../inc/StdAfx.h.gch
+# all-am: PRECOMPILED_HEADER
+
+# PRECOMPILED_HEADER : ../inc/StdAfx.h
+# 	g++ -c ../inc/StdAfx.h $(CPPFLAGS) -o $(PRECOMPILED_HEADER)
+	
+%.o: %.cpp
+	@echo "  COMPILE: $(@D)/$(<F) "
+	@$(CXXCOMPILE) -c $< $(CPPFLAGS) $(CFLAGS)  -o $@
+
+
+openCU_SOURCES = \
 	AudioCapture.cpp	\
 	AudioPacket.cpp		\
 	AudioPlayer.cpp		\
@@ -47,5 +46,3 @@ h264client_SOURCES = \
 	VideoWindow.cpp		\
 	XVIDVideoCodec.cpp	\
 	main.cpp
-
- 

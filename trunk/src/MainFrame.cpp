@@ -48,8 +48,9 @@ BEGIN_EVENT_TABLE(MainFrame, wxMDIParentFrame)
     EVT_MENU(menuReflectorDisconnectID,  MainFrame::OnDisconnect)
     EVT_MENU(menuReflectorSendVideo,  MainFrame::OnSendVideo)
     EVT_MENU(menuReflectorSendAudio,  MainFrame::OnSendAudio)
-/*    EVT_MENU(menuLocalCaptureVideo,  MainFrame::OnLocalCaptureVideo)
-    EVT_MENU(menuLocalCaptureAudio,  MainFrame::OnLocalCaptureAudio) */
+
+    EVT_MENU(menuLocalCaptureVideo,  MainFrame::OnLocalCaptureVideo)
+    EVT_MENU(menuLocalCaptureAudio,  MainFrame::OnLocalCaptureAudio) 
     EVT_MENU(wxID_ABOUT, MainFrame::OnAbout)
 
     EVT_CLOSE(MainFrame::OnClose)
@@ -79,9 +80,11 @@ MainFrame::MainFrame(wxWindow *parent,
 	   m_keepAliveTimer(this, MainFrameKeepAliveTimer), m_command(NULL), 
 	   m_statbarCustom(NULL), 
 	   m_audioCapture(NULL), m_audioPlayer(NULL), 
-	   m_statusBarTimer(this, MainFrameStatusBarTimer)
+	   m_statusBarTimer(this, MainFrameStatusBarTimer), m_treeWindow(this, MainFrameTreeControl)
 {
+	printf("create main frame ...\n");
 #if wxUSE_MENUS
+	printf("create Menus ...\n");
     // the "About" item should be in the help menu
     wxMenu *helpMenu = new wxMenu;
     helpMenu->Append(wxID_ABOUT, _T("&About...\tF1"), _T("Show about frame"));
@@ -94,7 +97,8 @@ MainFrame::MainFrame(wxWindow *parent,
     menuReflector->Append(menuReflectorSendAudio, _T("Send &Audio\tF8"), _T("Send Audio to Reflector"));
     menuReflector->Append(wxID_EXIT, _T("E&xit\tAlt-X"), _T("Quit this program"));
 
-#if 0
+#if 1
+	printf("create captures menu ...\n");
     // create a menu bar
     wxMenu *menuLocal = new wxMenu;
     menuLocal->Append(menuLocalCaptureVideo, _T("&Capture Video\tF5"), _T("Search for local USB cameras"));
@@ -104,7 +108,7 @@ MainFrame::MainFrame(wxWindow *parent,
     // now append the freshly created menu to the menu bar...
     wxMenuBar *menuBar = new wxMenuBar();
     menuBar->Append(menuReflector, _T("&Reflector"));
-    //menuBar->Append(menuLocal, _T("&Local"));
+    menuBar->Append(menuLocal, _T("&Local"));
     menuBar->Append(helpMenu, _T("&Help"));
 
 #endif
@@ -114,11 +118,13 @@ MainFrame::MainFrame(wxWindow *parent,
 
 	m_panel = new ChatPanel( this, 10, 10, 300, 100 );
 
-	m_treeWindow = new wxTreeCtrl(this, MainFrameTreeControl);
 	wxImageList *images = new wxImageList(14, 14, true);
-	m_openEyeImage = images->Add(wxImage( IMAGESDIR "eyeopen.bmp"));
+	printf("Loading image: %s\n", IMAGESDIR "eyeopen.bmp");
+	// m_openEyeImage = images->Add(wxImage( IMAGESDIR "eyeopen.bmp"));
+	printf("%s : %d\n", __FILE__, __LINE__);
 	m_closeEyeImage = images->Add(wxImage( IMAGESDIR "eyeclose.bmp"));
-	m_treeWindow->SetImageList(images);
+	printf("%s : %d\n", __FILE__, __LINE__);
+	m_treeWindow.SetImageList(images);
 
 	m_last_receive = 0;
 	m_last_sent = 0;
@@ -126,6 +132,8 @@ MainFrame::MainFrame(wxWindow *parent,
 
     // ... and attach this menu bar to the frame
     SetMenuBar(menuBar);
+
+	printf("menu bar set\n");
 
 	//initTextChatItems();
 }
@@ -138,14 +146,22 @@ void MainFrame::OnSize(wxSizeEvent&
                                   #endif
                                   )
 {
+	printf("%s : %d\n", __FILE__, __LINE__);
     int w, h;
     GetClientSize(&w, &h);
+	printf("%s : %d\n", __FILE__, __LINE__);
 
-	m_treeWindow->SetSize(0, 0, w/3, h);
+	m_treeWindow.SetSize(0, 0, w/3, h);
+	printf("%s : %d\n", __FILE__, __LINE__);
+	printf("w : %d\n", w);
+	printf("h : %d\n", h);
+	printf("m_panel : %p\n", m_panel);
 	m_panel->SetSize(w/3, 2*h/3, 2*w/3, h/3);
+	printf("%s : %d\n", __FILE__, __LINE__);
 
 	GetClientWindow()->SetSize(w/3, 0, w, 2*h/3);
 
+	printf("%s : %d\n", __FILE__, __LINE__);
     // FIXME: On wxX11, we need the MDI frame to process this
     // event, but on other platforms this should not
     // be done.
@@ -153,6 +169,7 @@ void MainFrame::OnSize(wxSizeEvent&
     event.Skip();
 #endif
 
+	printf("%s : %d\n", __FILE__, __LINE__);
 	
 }
 
@@ -195,6 +212,7 @@ MainFrame::~MainFrame()
 
 void MainFrame::StartCapture()
 {
+	printf("Start capture\n");
 	wxCommandEvent e;
 	OnLocalCaptureVideo(e);
 	OnLocalCaptureAudio(e);
@@ -237,8 +255,8 @@ void MainFrame::OnConnect(wxCommandEvent& WXUNUSED(ev))
 		stat_str << " : ";
 		stat_str << connectDlg.getTargetPort();
 		stat_str << " ...";
-
-		SetStatusText(stat_str.str());
+		wxString wxStatStr = stat_str.str().c_str();
+		SetStatusText(wxStatStr);
 
 		assert(m_command == NULL);
 		m_command = new CommandSocket(this);
@@ -288,7 +306,7 @@ void MainFrame::OnDisconnect(wxCommandEvent& WXUNUSED(event))
 		GetMenuBar()->FindItem(menuReflectorDisconnectID, NULL)->Enable(false);
 		m_connected = false;
 
-		m_treeWindow->DeleteAllItems();
+		m_treeWindow.DeleteAllItems();
 		//m_command will destroy itself - no need to delete
 		m_command = NULL;
 
@@ -362,7 +380,8 @@ void MainFrame::OnSendVideo(wxCommandEvent& WXUNUSED(event))
 
 void MainFrame::setReflectorName(/*std::string name*/)
 {
-	m_rootItem = m_treeWindow->AddRoot(m_reflectorName);
+	wxString wxReflectorName = m_reflectorName.c_str();
+	m_rootItem = m_treeWindow.AddRoot(wxReflectorName);
 	m_treeClients[m_rootItem.m_pItem] = 0;
 }
 
@@ -370,12 +389,13 @@ void MainFrame::updateClientInfo(ClientInfo *cf)
 {
 	if (m_clientTreeMap.find(cf) != m_clientTreeMap.end()) {
 		wxTreeItemId clientItem = m_clientTreeMap[cf];
-		m_treeWindow->SetItemImage(clientItem, cf->isSeeingUs() ? m_openEyeImage : m_closeEyeImage);
+		m_treeWindow.SetItemImage(clientItem, cf->isSeeingUs() ? m_openEyeImage : m_closeEyeImage);
 		return;
 	}
 
-	wxTreeItemId clientItem = m_treeWindow->AppendItem(m_rootItem, 
-		cf->getUsername(), 
+	wxString wxUsername = cf->getUsername().c_str();
+	wxTreeItemId clientItem = m_treeWindow.AppendItem(m_rootItem, 
+		wxUsername, 
 		cf->isSeeingUs() ? m_openEyeImage : m_closeEyeImage);
 	m_treeClients[clientItem.m_pItem] = cf;  //saving cf in a map to handle tree events
 	m_clientTreeMap[cf] = clientItem; // saving iteeId in a map to handle reflector events
@@ -399,14 +419,16 @@ void MainFrame::requestForClient(ClientInfo *cf)
 	struct in_addr client_in;
 	client_in.s_addr = clientIP;
 	string client_address = inet_ntoa(client_in);
+	wxString wxClientAddress = inet_ntoa(client_in);
 
 	ostringstream stat_str;
 	stat_str << "Asking for ";
 	stat_str <<  client_address;
+	wxString wxStatStr = stat_str.str().c_str();
 
-	SetStatusText(stat_str.str());
+	SetStatusText(wxStatStr);
 
-	ClientVideoWindow *window = new ClientVideoWindow(this, client_address, getNextWindowPosition());
+	ClientVideoWindow *window = new ClientVideoWindow(this, wxClientAddress, getNextWindowPosition());
 	m_clientWindows[clientIP] = window;
 
 /* TODO: Not worked in Linux
@@ -436,22 +458,29 @@ wxPoint MainFrame::getNextWindowPosition()
 	int row = availWindows / 2;
 	int col = availWindows % 2;
 
-	return wxPoint(VideoWindow::default_width * col, VideoWindow::default_height * row);
+	// return wxPoint(VideoWindow::default_width * col, VideoWindow::default_height * row);
+	return wxPoint(-1, -1);
 }
+
+
+
 
 void MainFrame::setStatus(std::string stat)
 {
-	SetStatusText(stat);
+	wxString wx_stat = stat.c_str();
+	SetStatusText(wx_stat);
 }
 
 void MainFrame::OnLocalCaptureVideo(wxCommandEvent& WXUNUSED(event))
 {
+	printf("local catpture video\n");
 	m_capture = new Capture;
 	if (!m_capture->init()) {
 		wxMessageBox(_T("Failed to capture from camera, using simple file ..."), 
 			_T("Warning"),
             wxICON_WARNING | wxOK);
-		m_capture->useFile( IMAGESDIR "test.jpg");
+		std::string testFile(IMAGESDIR "test.jpg");
+		m_capture->useFile( (char *) testFile.c_str() );
 	}
 
 	m_localVideoFrame = new LocalVideoWindow(this, _T("Local Video"), getNextWindowPosition());
@@ -476,6 +505,7 @@ void MainFrame::OnLocalCaptureVideo(wxCommandEvent& WXUNUSED(event))
 
 void MainFrame::showClientVideo(long address, VideoFrame *vf)
 {
+	printf("show client video\n");
 	ClientVideoWindow *window;
 
 	if (m_clientWindows.find(address) == m_clientWindows.end()) {
@@ -517,6 +547,7 @@ void MainFrame::remoteAudioReceived(long address, AudioFrame *af)
 
 void MainFrame::OnLocalCaptureAudio(wxCommandEvent& WXUNUSED(event))
 {
+	printf("on local capture audio\n");
  	if (!m_audioCapture) {
 		m_audioCapture = new AudioCapture();
 	}
@@ -544,6 +575,7 @@ void MainFrame::OnLocalCaptureAudio(wxCommandEvent& WXUNUSED(event))
 
 void MainFrame::AudioReceived(AudioFrame *af)
 {
+	printf("audio received\n");
 	short *audio_buf = (short *) af->getData();
 	SAMPLE max_d = 0;
 	int frameCount = af->getSize() / sizeof(SAMPLE);
@@ -592,7 +624,7 @@ void MainFrame::OnReflectorDisconnected(wxCommandEvent&)
 		GetMenuBar()->FindItem(menuReflectorDisconnectID, NULL)->Enable(false);
 		m_connected = false;
 
-		m_treeWindow->DeleteAllItems();
+		m_treeWindow.DeleteAllItems();
 		//m_command will destroy itself - no need to delete
 		m_command = NULL;
 	}
@@ -600,7 +632,7 @@ void MainFrame::OnReflectorDisconnected(wxCommandEvent&)
 
 void MainFrame::OnSetStatus(wxCommandEvent& event)
 {
-	string s = event.GetString().c_str();
+	string s(event.GetString().c_str());
 	setStatus(s);
 }
 

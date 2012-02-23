@@ -152,8 +152,8 @@ Packet *Packet::parseBlob(char *buffer, int len)
 			} else {
 				std::ostringstream stat_str;
 				stat_str << "Underestmined message received, type: " << msgType << ", data: " << data_type;
-
-				wxMessageBox(stat_str.str(), 
+				wxString wxStatStr = stat_str.str().c_str();
+				wxMessageBox(wxStatStr, 
 					_T("Error"),
 					wxICON_ERROR | wxOK);
 				return NULL;
@@ -171,8 +171,8 @@ Packet *Packet::parseBlob(char *buffer, int len)
 				stat_str <<  msgType;
 				stat_str <<  ", Data Type: ";
 				stat_str <<  data_type;
-
-				wxMessageBox(stat_str.str(), 
+				wxString wxStatStr = stat_str.str().c_str();
+				wxMessageBox(wxStatStr, 
 					_T("Error"),
 					wxICON_ERROR | wxOK);
 			}
