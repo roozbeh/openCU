@@ -1,7 +1,7 @@
 #ifndef _STD_AFX_H_
 #define _WINSOCKAPI_
 // For compilers that support precompilation, includes "wx/wx.h".
-#include "wx/wxprec.h"
+// #include "wx/wxprec.h"
 
 #ifdef __BORLANDC__
     #pragma hdrstop
@@ -32,9 +32,9 @@
 #endif
 
 /* openCV */
-#include <cxcore.h>
-#include <highgui.h>
-#include <cv.h>
+#include <opencv/cxcore.h>
+#include <opencv/highgui.h>
+#include <opencv/cv.h>
 
 /* port audio */
 #include <portaudio.h>

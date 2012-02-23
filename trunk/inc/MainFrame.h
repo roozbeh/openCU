@@ -179,7 +179,7 @@ private:
 	wxTreeItemId m_rootItem;
 
 	/** Tree control member variable*/
-	wxTreeCtrl *m_treeWindow;
+	wxTreeCtrl m_treeWindow;
 
 	/** Child window which shows local capture */
 	LocalVideoWindow *m_localVideoFrame;

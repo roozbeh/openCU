@@ -12,6 +12,21 @@
 /* Define to 1 if you have the <inttypes.h> header file. */
 #undef HAVE_INTTYPES_H
 
+/* Define to 1 if you have the `opencv_core' library (-lopencv_core). */
+#undef HAVE_LIBOPENCV_CORE
+
+/* Define to 1 if you have the `opencv_highgui' library (-lopencv_highgui). */
+#undef HAVE_LIBOPENCV_HIGHGUI
+
+/* Define to 1 if you have the `portaudio' library (-lportaudio). */
+#undef HAVE_LIBPORTAUDIO
+
+/* Define to 1 if you have the `speex' library (-lspeex). */
+#undef HAVE_LIBSPEEX
+
+/* Define to 1 if you have the `xvidcore' library (-lxvidcore). */
+#undef HAVE_LIBXVIDCORE
+
 /* Define to 1 if you have the <memory.h> header file. */
 #undef HAVE_MEMORY_H
 
@@ -24,8 +39,17 @@
 /* Define to 1 if you have the <netinet/in.h> header file. */
 #undef HAVE_NETINET_IN_H
 
+/* Define to 1 if you have the <opencv/cxcore.h> header file. */
+#undef HAVE_OPENCV_CXCORE_H
+
+/* Define to 1 if you have the <portaudio.h> header file. */
+#undef HAVE_PORTAUDIO_H
+
 /* Define to 1 if you have the `socket' function. */
 #undef HAVE_SOCKET
+
+/* Define to 1 if you have the <speex/speex.h> header file. */
+#undef HAVE_SPEEX_SPEEX_H
 
 /* Define to 1 if stdbool.h conforms to C99. */
 #undef HAVE_STDBOOL_H
@@ -54,6 +78,9 @@
 /* Define to 1 if you have the <unistd.h> header file. */
 #undef HAVE_UNISTD_H
 
+/* Define to 1 if you have the <xvid.h> header file. */
+#undef HAVE_XVID_H
+
 /* Define to 1 if the system has the type `_Bool'. */
 #undef HAVE__BOOL
 
@@ -71,6 +98,9 @@
 
 /* Define to the one symbol short name of this package. */
 #undef PACKAGE_TARNAME
+
+/* Define to the home page for this package. */
+#undef PACKAGE_URL
 
 /* Define to the version of this package. */
 #undef PACKAGE_VERSION
