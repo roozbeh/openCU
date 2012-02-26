@@ -60,16 +60,20 @@ private:
     DECLARE_EVENT_TABLE()
 };
 
-class VideoWindow : public wxMDIChildFrame
+class VideoWindow : public wxPanel /* was wxMDIChildFrame */
 {
+	std::string m_title;
 public:
     ImageCanvas *canvas;
     VideoWindow(wxMDIParentFrame *parent, const wxString& title, wxPoint pos);
+    VideoWindow(wxMDIParentFrame *parent, const wxString& title, wxPoint pos, wxSize siz);
 
 	void OnClose(wxCloseEvent& event);
 
 	static const int default_width = 170;
 	static const int default_height = 160;
+
+	void SetTitle(std::string t) { m_title = t;};
 
     DECLARE_EVENT_TABLE()
 };
@@ -79,6 +83,7 @@ class LocalVideoWindow : public VideoWindow, public CaptureListener
 {
 public:
 	LocalVideoWindow(wxMDIParentFrame *parent, const wxString& title, wxPoint pos);
+	LocalVideoWindow(wxMDIParentFrame *parent, const wxString& title, wxPoint pos, wxSize size);
 	~LocalVideoWindow();
 
 	void VideoReceived(VideoFrame *vf);

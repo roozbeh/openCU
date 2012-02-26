@@ -29,3 +29,15 @@ char *VideoFrame::getRawDataPtr()
 {
 	return m_image->imageData;
 }
+
+void VideoFrame::resizeImage(int targetWidth, int targetHeight)
+{
+	IplImage *newImg = cvCreateImage(cvSize(targetWidth, targetHeight), IPL_DEPTH_8U, 3);
+	cvResize(m_image, newImg);
+	if (m_ownImage) {
+		cvReleaseImage(&m_image);
+	}
+	m_image = newImg;
+	m_ownImage = true;
+}
+

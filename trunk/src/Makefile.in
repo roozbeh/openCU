@@ -95,6 +95,7 @@ ECHO_T = @ECHO_T@
 EGREP = @EGREP@
 EXEEXT = @EXEEXT@
 GREP = @GREP@
+HAVE_WXWIDGERS = @HAVE_WXWIDGERS@
 INSTALL = @INSTALL@
 INSTALL_DATA = @INSTALL_DATA@
 INSTALL_PROGRAM = @INSTALL_PROGRAM@
@@ -129,6 +130,7 @@ SPEEX_PREFIX = @SPEEX_PREFIX@
 STRIP = @STRIP@
 TEST_PKG_CONFIG = @TEST_PKG_CONFIG@
 VERSION = @VERSION@
+WXWIDGETS_PREFIX = @WXWIDGETS_PREFIX@
 XVID_PREFIX = @XVID_PREFIX@
 abs_builddir = @abs_builddir@
 abs_srcdir = @abs_srcdir@
@@ -522,18 +524,6 @@ uninstall-am: uninstall-binPROGRAMS
 	mostlyclean-generic pdf pdf-am ps ps-am tags uninstall \
 	uninstall-am uninstall-binPROGRAMS
 
-#-DIMAGESDIR='"$(pkgdatadir)/images/"'
-
-# openCU_LDFLAGS = \
-# 	`../extlib/wxWidgets-2.9.3/wx-config --libs` -lz
-
-# openCU_LDADD = -lcxcore -lcv -lhighgui -lspeex -lportaudio -lxvidcore
-
-# PRECOMPILED_HEADER = ../inc/StdAfx.h.gch
-# all-am: PRECOMPILED_HEADER
-
-# PRECOMPILED_HEADER : ../inc/StdAfx.h
-# 	g++ -c ../inc/StdAfx.h $(CPPFLAGS) -o $(PRECOMPILED_HEADER)
 
 %.o: %.cpp
 	@echo "  COMPILE: $(@D)/$(<F) "

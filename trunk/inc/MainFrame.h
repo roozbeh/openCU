@@ -207,6 +207,9 @@ private:
 	/** proposes a position for next child window */
 	wxPoint getNextWindowPosition();
 
+	/** proposes a size for next child window */
+	wxSize getVideoWindowSize();
+	
 	/** time object - we need this for keep alive sessions */
 	wxTimer m_keepAliveTimer;
 

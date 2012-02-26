@@ -68,7 +68,7 @@ AC_SUBST(SPEEX_LDFLAGS)
 AC_SUBST(SPEEX_CPPFLAGS)
 
 
-SPEEX_PREFIX=/usr
+XVID_PREFIX=/usr
 AC_ARG_WITH(xvid,
     [  --with-xvid=<path>       prefix of Xvid directory /usr/local/xvid],
     [XVID_PREFIX=$with_xvid])
@@ -78,6 +78,18 @@ XVID_LDFLAGS="-L${XVID_PREFIX}/lib -lxvidcore "
 XVID_CPPFLAGS="-I${XVID_PREFIX}/include"
 AC_SUBST(SPEEX_LDFLAGS)
 AC_SUBST(SPEEX_CPPFLAGS)
+
+
+WXWIDGETS_PREFIX=/usr
+AC_ARG_WITH(wxwidgets,
+    [  --with-wxwidgets=<path>       prefix of WxWidgets 2.9.3 directory],
+    [WXWIDGETS_PREFIX=$with_wxwidgets])
+
+AC_SUBST(WXWIDGETS_PREFIX)
+# WXWIDGETS_LDFLAGS="`WXWIDGETS_PREFIX/wx-config --libs` "
+# WXWIDGETS_CPPFLAGS="`WXWIDGETS_PREFIX/wx-config --cppflags`"
+# AC_SUBST(WXWIDGETS_LDFLAGS)
+# AC_SUBST(WXWIDGETS_CPPFLAGS)
 
 
 #AC_CONFIG_SUBDIRS([extlib/speex-1.2rc1]) 
@@ -103,8 +115,19 @@ CPPFLAGS="${XVID_CPPFLAGS} $CPPFLAGS"
 AC_CHECK_HEADERS(xvid.h,,AC_MSG_ERROR(openCU requires Xvid library installed),)
 AC_CHECK_LIB(xvidcore,xvid_global,,AC_MSG_ERROR(openCU requires Xvid library installed))
 
-CPPFLAGS="`extlib/wxWidgets-2.9.3/wx-config --cppflags` $CPPFLAGS"
-LDFLAGS="$LDFLAGS `extlib/wxWidgets-2.9.3/wx-config --libs` -lz"
+# AC_CHECK_PROG (wxwidgets_param, 'wx-config',,, WXWIDGETS_PREFIX, AC_MSG_ERROR(openCU requires wxWidgets library installed))
+# AC_CHECK_PROG ([wxparam], [find], 1, 0)
+AC_CHECK_PROG(HAVE_WXWIDGERS, wx-config, true, false, $WXWIDGETS_PREFIX/bin)
+if test "x$HAVE_WXWIDGERS" = "xfalse" ; then
+	echo $WXWIDGETS_PREFIX/bin
+	AC_MSG_ERROR(openCU requires wxWidgets library installed)
+fi
+LDFLAGS="`$WXWIDGETS_PREFIX/bin/wx-config --libs` $LDFLAGS"
+CPPFLAGS="`$WXWIDGETS_PREFIX/bin/wx-config --cppflags` $CPPFLAGS"
+
+
+AC_CHECK_LIB(z,compress2,,AC_MSG_ERROR(openCU requires zlib library installed))
+LDFLAGS="-lz $LDFLAGS"
 
 #make default to be C++
 AC_LANG([C++])

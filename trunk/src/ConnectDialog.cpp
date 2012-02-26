@@ -37,7 +37,7 @@ ConnectDialog::ConnectDialog(wxWindow *parent) : wxDialog(parent,
 
     //// Host IP
     wxBoxSizer* itemSizer3 = new wxBoxSizer( wxHORIZONTAL );
-	m_hostIP = new wxTextCtrl( this, ConnectDlgHostIP, "opencu://ipsix.org", wxDefaultPosition ); //91.184.33.25
+	m_hostIP = new wxTextCtrl( this, ConnectDlgHostIP, "opencu://darooz.org", wxDefaultPosition ); //91.184.33.25
 	m_hostIP->Enable(false);
 	itemSizer3->Add(new wxStaticText(this, ConnectDlgStaticText, _("Reflector:")), 0, wxALL|wxALIGN_CENTER_VERTICAL, 5);
     itemSizer3->Add(m_hostIP, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5);

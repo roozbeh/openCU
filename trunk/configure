@@ -606,6 +606,8 @@ ac_subst_vars='am__EXEEXT_FALSE
 am__EXEEXT_TRUE
 LTLIBOBJS
 LIBOBJS
+HAVE_WXWIDGERS
+WXWIDGETS_PREFIX
 XVID_PREFIX
 SPEEX_CPPFLAGS
 SPEEX_LDFLAGS
@@ -711,6 +713,7 @@ with_opencv
 with_portaudio
 with_speex
 with_xvid
+with_wxwidgets
 '
       ac_precious_vars='build_alias
 host_alias
@@ -1350,6 +1353,7 @@ Optional Packages:
   --with-portaudio=<path>       prefix of PortAudio directory /usr/local/portaudio
   --with-speex=<path>       prefix of Speex directory /usr/local/speex
   --with-xvid=<path>       prefix of Xvid directory /usr/local/xvid
+  --with-wxwidgets=<path>       prefix of WxWidgets 2.9.3 directory
 
 Some influential environment variables:
   CXX         C++ compiler command
@@ -4732,7 +4736,7 @@ SPEEX_CPPFLAGS="-I${SPEEX_PREFIX}/include"
 
 
 
-SPEEX_PREFIX=/usr
+XVID_PREFIX=/usr
 
 # Check whether --with-xvid was given.
 if test "${with_xvid+set}" = set; then :
@@ -4745,6 +4749,21 @@ XVID_LDFLAGS="-L${XVID_PREFIX}/lib -lxvidcore "
 XVID_CPPFLAGS="-I${XVID_PREFIX}/include"
 
 
+
+
+WXWIDGETS_PREFIX=/usr
+
+# Check whether --with-wxwidgets was given.
+if test "${with_wxwidgets+set}" = set; then :
+  withval=$with_wxwidgets; WXWIDGETS_PREFIX=$with_wxwidgets
+fi
+
+
+
+# WXWIDGETS_LDFLAGS="`WXWIDGETS_PREFIX/wx-config --libs` "
+# WXWIDGETS_CPPFLAGS="`WXWIDGETS_PREFIX/wx-config --cppflags`"
+# AC_SUBST(WXWIDGETS_LDFLAGS)
+# AC_SUBST(WXWIDGETS_CPPFLAGS)
 
 
 #AC_CONFIG_SUBDIRS([extlib/speex-1.2rc1])
@@ -5052,8 +5071,102 @@ else
 fi
 
 
-CPPFLAGS="`extlib/wxWidgets-2.9.3/wx-config --cppflags` $CPPFLAGS"
-LDFLAGS="$LDFLAGS `extlib/wxWidgets-2.9.3/wx-config --libs` -lz"
+# AC_CHECK_PROG (wxwidgets_param, 'wx-config',,, WXWIDGETS_PREFIX, AC_MSG_ERROR(openCU requires wxWidgets library installed))
+# AC_CHECK_PROG ([wxparam], [find], 1, 0)
+# Extract the first word of "wx-config", so it can be a program name with args.
+set dummy wx-config; ac_word=$2
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for $ac_word" >&5
+$as_echo_n "checking for $ac_word... " >&6; }
+if ${ac_cv_prog_HAVE_WXWIDGERS+:} false; then :
+  $as_echo_n "(cached) " >&6
+else
+  if test -n "$HAVE_WXWIDGERS"; then
+  ac_cv_prog_HAVE_WXWIDGERS="$HAVE_WXWIDGERS" # Let the user override the test.
+else
+as_save_IFS=$IFS; IFS=$PATH_SEPARATOR
+for as_dir in $WXWIDGETS_PREFIX/bin
+do
+  IFS=$as_save_IFS
+  test -z "$as_dir" && as_dir=.
+    for ac_exec_ext in '' $ac_executable_extensions; do
+  if { test -f "$as_dir/$ac_word$ac_exec_ext" && $as_test_x "$as_dir/$ac_word$ac_exec_ext"; }; then
+    ac_cv_prog_HAVE_WXWIDGERS="true"
+    $as_echo "$as_me:${as_lineno-$LINENO}: found $as_dir/$ac_word$ac_exec_ext" >&5
+    break 2
+  fi
+done
+  done
+IFS=$as_save_IFS
+
+  test -z "$ac_cv_prog_HAVE_WXWIDGERS" && ac_cv_prog_HAVE_WXWIDGERS="false"
+fi
+fi
+HAVE_WXWIDGERS=$ac_cv_prog_HAVE_WXWIDGERS
+if test -n "$HAVE_WXWIDGERS"; then
+  { $as_echo "$as_me:${as_lineno-$LINENO}: result: $HAVE_WXWIDGERS" >&5
+$as_echo "$HAVE_WXWIDGERS" >&6; }
+else
+  { $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
+$as_echo "no" >&6; }
+fi
+
+
+if test "x$HAVE_WXWIDGERS" = "xfalse" ; then
+	echo $WXWIDGETS_PREFIX/bin
+	as_fn_error $? "openCU requires wxWidgets library installed" "$LINENO" 5
+fi
+LDFLAGS="`$WXWIDGETS_PREFIX/bin/wx-config --libs` $LDFLAGS"
+CPPFLAGS="`$WXWIDGETS_PREFIX/bin/wx-config --cppflags` $CPPFLAGS"
+
+
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for compress2 in -lz" >&5
+$as_echo_n "checking for compress2 in -lz... " >&6; }
+if ${ac_cv_lib_z_compress2+:} false; then :
+  $as_echo_n "(cached) " >&6
+else
+  ac_check_lib_save_LIBS=$LIBS
+LIBS="-lz  $LIBS"
+cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+/* end confdefs.h.  */
+
+/* Override any GCC internal prototype to avoid an error.
+   Use char because int might match the return type of a GCC
+   builtin and then its argument prototype would still apply.  */
+#ifdef __cplusplus
+extern "C"
+#endif
+char compress2 ();
+int
+main ()
+{
+return compress2 ();
+  ;
+  return 0;
+}
+_ACEOF
+if ac_fn_c_try_link "$LINENO"; then :
+  ac_cv_lib_z_compress2=yes
+else
+  ac_cv_lib_z_compress2=no
+fi
+rm -f core conftest.err conftest.$ac_objext \
+    conftest$ac_exeext conftest.$ac_ext
+LIBS=$ac_check_lib_save_LIBS
+fi
+{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_cv_lib_z_compress2" >&5
+$as_echo "$ac_cv_lib_z_compress2" >&6; }
+if test "x$ac_cv_lib_z_compress2" = xyes; then :
+  cat >>confdefs.h <<_ACEOF
+#define HAVE_LIBZ 1
+_ACEOF
+
+  LIBS="-lz $LIBS"
+
+else
+  as_fn_error $? "openCU requires zlib library installed" "$LINENO" 5
+fi
+
+LDFLAGS="-lz $LDFLAGS"
 
 #make default to be C++
 ac_ext=cpp

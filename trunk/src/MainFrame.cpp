@@ -146,31 +146,73 @@ void MainFrame::OnSize(wxSizeEvent&
                                   #endif
                                   )
 {
-	printf("%s : %d\n", __FILE__, __LINE__);
+	printf("MainFrame::OnSize \n");
     int w, h;
     GetClientSize(&w, &h);
-	printf("%s : %d\n", __FILE__, __LINE__);
 
 	m_treeWindow.SetSize(0, 0, w/3, h);
-	printf("%s : %d\n", __FILE__, __LINE__);
-	printf("w : %d\n", w);
-	printf("h : %d\n", h);
-	printf("m_panel : %p\n", m_panel);
 	m_panel->SetSize(w/3, 2*h/3, 2*w/3, h/3);
-	printf("%s : %d\n", __FILE__, __LINE__);
-
+	
+	//video windows -> w/3, 0, 2*w/3, 2*h/3
+	if (m_clientWindows.size() <= 3) {
+		if (m_localVideoFrame) {
+			m_localVideoFrame->SetSize(w/3, 0, w/3, h/3);
+		}
+	} else {
+		//NEED TO BE TAKE CARE OF
+		printf("MainFrame::OnSize too many views\n");
+	}
+	
 	GetClientWindow()->SetSize(w/3, 0, w, 2*h/3);
 
-	printf("%s : %d\n", __FILE__, __LINE__);
     // FIXME: On wxX11, we need the MDI frame to process this
     // event, but on other platforms this should not
     // be done.
 #ifdef __WXUNIVERSAL__
     event.Skip();
 #endif
+}
 
-	printf("%s : %d\n", __FILE__, __LINE__);
+wxPoint MainFrame::getNextWindowPosition()
+{
+	int window_width, window_height;
+    int w, h;
+    GetClientSize(&w, &h);
+
+	int availWindows = 0;
+	if (m_localVideoFrame) {
+		availWindows++;
+	}
+	availWindows += m_clientWindows.size();
 	
+	if (availWindows < 4) {
+		int window_offset_x = w/3;
+		int window_offset_y = 0;
+		int window_width = w/3;
+		int window_height = h/3;
+		
+		return wxPoint(window_offset_x + (availWindows % 2) * window_width, window_offset_y + (availWindows / 2) * window_height);
+	}
+
+	return wxPoint(-1, -1);
+}
+
+wxSize MainFrame::getVideoWindowSize()
+{
+    int w, h;
+    GetClientSize(&w, &h);
+
+	int availWindows = 0;
+	if (m_localVideoFrame) {
+		availWindows++;
+	}
+	availWindows += m_clientWindows.size();
+	
+	if (availWindows <= 4) {
+		return wxSize(w/3, h/3);
+	}
+
+	return wxSize(-1, -1);
 }
 
 MainFrame::~MainFrame()
@@ -447,21 +489,6 @@ void MainFrame::requestForClient(ClientInfo *cf)
 	m_command->askForClient(cf);
 }
 
-wxPoint MainFrame::getNextWindowPosition()
-{
-	int availWindows = 0;
-	if (m_localVideoFrame) {
-		availWindows++;
-	}
-	availWindows += m_clientWindows.size();
-
-	int row = availWindows / 2;
-	int col = availWindows % 2;
-
-	// return wxPoint(VideoWindow::default_width * col, VideoWindow::default_height * row);
-	return wxPoint(-1, -1);
-}
-
 
 
 
@@ -483,12 +510,12 @@ void MainFrame::OnLocalCaptureVideo(wxCommandEvent& WXUNUSED(event))
 		m_capture->useFile( (char *) testFile.c_str() );
 	}
 
-	m_localVideoFrame = new LocalVideoWindow(this, _T("Local Video"), getNextWindowPosition());
+	wxPoint pos = getNextWindowPosition();
+	m_localVideoFrame = new LocalVideoWindow(this, _T("Local Video"), pos, getVideoWindowSize());
 
 	m_capture->addListener(m_localVideoFrame);
 	m_capture->startVideoCapture();
 
-    m_localVideoFrame->SetTitle("Local Video");
 
 /* TODO: Not worked in Linux
     // Give it an icon
@@ -498,6 +525,7 @@ void MainFrame::OnLocalCaptureVideo(wxCommandEvent& WXUNUSED(event))
     m_localVideoFrame->GetClientSize(&width, &height);
     ImageCanvas *canvas = new ImageCanvas(m_localVideoFrame, wxPoint(0, 0), wxSize(width, height));
     canvas->SetCursor(wxCursor(wxCURSOR_PENCIL));
+    canvas->setTitle("Local Video");
     m_localVideoFrame->canvas = canvas;
 
 	m_localVideoFrame->Show(true);

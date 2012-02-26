@@ -47,6 +47,7 @@ public:
 	int getHeight() {return m_image->height;};
 
 	void setImage(IplImage *img, bool ownImage) {m_image = img; m_ownImage = ownImage;};
+	void resizeImage(int targetWidth, int targetHeight);
 };
 
 #endif //__OPEN_CU_VIDEO_FRAME_H__
